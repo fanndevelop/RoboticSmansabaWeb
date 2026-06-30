@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Robotika Smansaba - Ekstrakurikuler</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#e0f2fe',
+                            100: '#bae6fd',
+                            200: '#7dd3fc',
+                            300: '#38bdf8',
+                            400: '#0ea5e9',
+                            500: '#0284c7', 
+                            neon: '#00e5ff' // Warna neon dari referensi
+                        },
+                        darkBg: '#020816',
+                        cardBg: '#08101a',
+                        borderBg: '#1e293b'
+                    },
+                    fontFamily: {
+                        sans: ['Poppins', 'Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #020816;
+            color: #cfeff6;
+        }
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #020816; }
+        ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #00e5ff; }
+        .glow-neon { box-shadow: 0 0 20px rgba(0, 229, 255, 0.2); }
+        .glow-red { box-shadow: 0 0 20px rgba(255, 50, 50, 0.4); }
+        .glow-yellow { box-shadow: 0 0 20px rgba(255, 200, 50, 0.3); }
+        .text-glow { text-shadow: 0 0 10px rgba(0, 229, 255, 0.4); }
+        
+        /* Toggle Switch CSS Fix for Minigame */
+        .toggle-checkbox:checked { transform: translateX(100%); border-color: #00e5ff; }
+        .toggle-checkbox:checked + .toggle-label { background-color: #00e5ff; }
+        
+        /* Style for Lock Switch (Merah jika aktif/mengunci) */
+        .toggle-checkbox-lock:checked { transform: translateX(100%); border-color: #ef4444; }
+        .toggle-checkbox-lock:checked + .toggle-label { background-color: #ef4444; }
+    </style>
+</head>
+<body class="overflow-x-hidden">
+
+    <!-- Toast Notification -->
+    <div id="toast" class="fixed bottom-5 right-5 z-50 transform translate-y-20 opacity-0 transition-all duration-300 pointer-events-none">
+        <div class="bg-cardBg border-l-4 border-brand-neon text-white p-4 rounded-r-lg shadow-2xl flex items-center gap-3 min-w-[300px]" id="toast-body">
+            <span class="text-brand-neon text-xl" id="toast-icon"><i class="fas fa-check-circle"></i></span>
+            <div>
+                <p id="toast-message" class="text-sm font-medium">Berhasil!</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Navigation Header -->
+    <header class="fixed w-full top-0 z-40 bg-darkBg/90 backdrop-blur-md border-b border-borderBg">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+            <!-- Logo -->
+            <a href="#home" class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl overflow-hidden flex items-center justify-center shadow-lg shadow-brand-neon/20 bg-white">
+                    <img src="https://c.termai.cc/i178/RjNOZKF.webp" alt="Logo Robotika" class="w-full h-full object-cover">
+                </div>
+                <span class="text-xl font-extrabold tracking-wider text-white">ROBOTIKA <span class="text-brand-neon">SMANSABA</span></span>
+            </a>
+
+            <!-- Desktop Nav -->
+            <nav class="hidden md:flex items-center gap-8">
+                <a href="#tentang" class="text-gray-300 hover:text-brand-neon font-medium transition-colors">Tentang Ekstra</a>
+                <a href="#galeri" class="text-gray-300 hover:text-brand-neon font-medium transition-colors">Galeri Kegiatan</a>
+                <a href="#minigame" class="text-gray-300 hover:text-brand-neon font-medium transition-colors">Tantangan Logika</a>
+            </nav>
+
+            <!-- CTA Buttons -->
+            <div class="hidden md:flex items-center gap-4">
+                <a href="#daftar" class="bg-brand-neon hover:bg-brand-500 text-darkBg font-bold px-6 py-2.5 rounded-full shadow-lg shadow-brand-neon/20 transition-all hover:scale-105">
+                    Gabung Ekskul
+                </a>
+            </div>
+
+            <!-- Mobile Menu Button -->
+            <button id="mobile-menu-btn" onclick="toggleMobileMenu()" class="md:hidden text-white hover:text-brand-neon text-2xl focus:outline-none">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+
+        <!-- Mobile Dropdown Menu -->
+        <div id="mobile-menu" class="hidden md:hidden bg-cardBg border-b border-borderBg px-4 py-4 space-y-3 transition-all">
+            <a href="#tentang" class="block text-gray-300 hover:text-brand-neon font-medium py-2" onclick="toggleMobileMenu()">Tentang Ekstra</a>
+            <a href="#galeri" class="block text-gray-300 hover:text-brand-neon font-medium py-2" onclick="toggleMobileMenu()">Galeri Kegiatan</a>
+            <a href="#minigame" class="block text-gray-300 hover:text-brand-neon font-medium py-2" onclick="toggleMobileMenu()">Tantangan Logika</a>
+            <hr class="border-borderBg">
+            <div class="flex flex-col gap-3 pt-2">
+                <a href="#daftar" onclick="toggleMobileMenu()" class="bg-brand-neon hover:bg-brand-500 text-darkBg font-bold text-center py-2.5 rounded-full transition-all">
+                    Gabung Sekarang
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <main class="pt-20">
+        
+        <!-- HERO SECTION -->
+        <section id="home" class="relative min-h-[90vh] flex items-center justify-center overflow-hidden py-16">
+            <div class="absolute inset-0 z-0">
+                <div class="absolute top-1/4 left-1/4 w-96 h-96 bg-brand-neon/10 rounded-full blur-[120px]"></div>
+                <div class="absolute bottom-1/4 right-1/4 w-96 h-96 bg-purple-500/10 rounded-full blur-[120px]"></div>
+                <div class="absolute inset-0 opacity-10 bg-[linear-gradient(to_right,#808080_1px,transparent_1px),linear-gradient(to_bottom,#808080_1px,transparent_1px)] bg-[size:24px_24px]"></div>
+            </div>
+
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                <!-- Text Area -->
+                <div class="text-left space-y-6">
+                    <div class="inline-flex items-center gap-2 px-3 py-1.5 bg-brand-neon/10 border border-brand-neon/30 rounded-full text-brand-neon text-sm font-semibold tracking-wider uppercase">
+                        <i class="fas fa-microchip text-xs"></i> Official • Web
+                    </div>
+                    <h1 class="text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight leading-tight">
+                        EXTRACULICULAR <span class="text-brand-neon text-glow">ROBOTIKA</span>
+                    </h1>
+                    <p class="text-gray-400 text-lg max-w-lg leading-relaxed">
+                        Robotika Smansaba adalah ekstrakurikuler yang mengembangkan kemampuan dalam bidang elektronika dan digital.
+                    </p>
+                    <div class="flex flex-col sm:flex-row gap-4 pt-4">
+                        <a href="#tentang" class="bg-brand-neon hover:bg-brand-500 text-darkBg font-extrabold text-center px-8 py-4 rounded-full shadow-lg shadow-brand-neon/30 hover:shadow-brand-neon/50 transition-all hover:-translate-y-0.5 duration-200">
+                            CARI TAHU LEBIH <i class="fas fa-arrow-down ml-2"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Graphic Preview (Foto Awal) -->
+                <div class="relative flex justify-center items-center">
+                    <div class="relative w-full max-w-md">
+                        <div class="absolute -inset-1 bg-gradient-to-r from-brand-neon to-blue-500 rounded-3xl blur opacity-30 animate-pulse"></div>
+                        <!-- Foto Awal -->
+                        <img src="https://c.termai.cc/i134/maqGhS.jpg" alt="Robotika Smansaba" class="relative rounded-3xl border border-borderBg shadow-2xl object-cover h-[400px] w-full">
+                        
+                        <!-- Floating Badge -->
+                        <div class="absolute -bottom-6 -left-6 bg-cardBg border border-borderBg p-4 rounded-2xl shadow-xl flex items-center gap-4">
+                            <div class="w-12 h-12 bg-green-500/20 text-green-400 rounded-full flex items-center justify-center text-xl">
+                                <i class="fas fa-bolt"></i>
+                            </div>
+                            <div>
+                                <p class="text-xs text-gray-400">Rekayasa &</p>
+                                <p class="text-sm font-bold text-white">Robotika</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 1: TENTANG KAMI -->
+        <section id="tentang" class="py-24 bg-darkBg border-t border-borderBg relative">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center space-y-4 mb-16">
+                    <h2 class="text-xs font-extrabold text-brand-neon tracking-widest uppercase">Pengenalan</h2>
+                    <h3 class="text-3xl sm:text-4xl font-black">ROBOTIKA SMANSABA</h3>
+                    <p class="text-gray-400 max-w-2xl mx-auto leading-relaxed">
+                        Robotika Smansaba adalah ekstrakurikuler yang mengembangkan kemampuan dalam bidang elektronika dan digital, di mana ketua dari ekstra robotika ini adalah <strong>Aldi</strong>, dan wakil 1 serta 2 adalah <strong>Rifan</strong> dan <strong>Wildan</strong>.
+                    </p>
+                </div>
+
+                <!-- Info Jadwal & Tempat -->
+                <div class="bg-gradient-to-r from-cardBg to-darkBg border border-brand-neon/30 p-8 rounded-3xl shadow-lg flex flex-col items-center justify-between gap-8 mb-20 relative overflow-hidden">
+                    <div class="absolute right-0 top-0 w-64 h-64 bg-brand-neon/5 rounded-full blur-3xl"></div>
+                    
+                    <div class="text-center w-full relative z-10">
+                        <h4 class="text-2xl font-bold text-white mb-4"><i class="fas fa-map-marker-alt text-brand-neon mr-2"></i> Lokasi Ruangan & Waktu</h4>
+                        <p class="text-gray-400 leading-relaxed mb-6 max-w-3xl mx-auto">Pelaksanaan Ekstrakurikuler Robotika ini biasanya diselenggarakan pada <strong>Labkom 3 Smansaba</strong>, yang terletak di sebelah timur <strong>Kantin Hijau</strong> dan <strong>parkiran</strong>.</p>
+                        
+                        <div class="flex justify-center">
+                            <div class="bg-darkBg p-4 rounded-xl border border-borderBg flex items-center gap-4 inline-flex">
+                                <div class="text-brand-neon text-2xl"><i class="fas fa-clock"></i></div>
+                                <div class="text-left">
+                                    <p class="text-xs text-gray-500 uppercase">Pelaksanaan</p>
+                                    <p class="font-bold text-white">Sabtu, 07.30 - Selesai</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Struktur Organisasi & Pembina -->
+                <div>
+                    <div class="text-center mb-10">
+                        <h3 class="text-2xl font-bold mb-4 text-white">Pembina Robotik & Pengurus</h3>
+                        <p class="text-gray-400 max-w-2xl mx-auto leading-relaxed">
+                            Pembina Ekstrakurikuler Robotik ini adalah <strong>Pak Rochman</strong> dan kadang kala didampingi oleh <strong>Pak Mahendra</strong>. Keduanya sangat berperan penting, karena dengan adanya pembina, ekstra Robotika selalu berjalan dengan lancar.
+                        </p>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                        <!-- Pembina -->
+                        <div class="bg-cardBg p-6 rounded-2xl border border-borderBg text-center transition-transform hover:-translate-y-2">
+                            <div class="w-24 h-24 mx-auto mb-4 rounded-full border-2 border-brand-neon overflow-hidden">
+                                <img src="https://c.termai.cc/i101/LBMhyHu.jpg" alt="Pembina" class="w-full h-full object-cover">
+                            </div>
+                            <h5 class="font-bold text-lg text-white">Pak Rochman</h5>
+                            <p class="text-xs text-brand-neon">Pembina Robotik</p>
+                        </div>
+                        <!-- Ketua -->
+                        <div class="bg-cardBg p-6 rounded-2xl border border-borderBg text-center transition-transform hover:-translate-y-2">
+                            <div class="w-24 h-24 mx-auto mb-4 rounded-full border-2 border-gray-500 overflow-hidden">
+                                <img src="https://c.termai.cc/i137/6AkQ.jpg" alt="Ketua" class="w-full h-full object-cover">
+                            </div>
+                            <h5 class="font-bold text-lg text-white">Aldi</h5>
+                            <p class="text-xs text-gray-400">Ketua Ekstra</p>
+                        </div>
+                        <!-- Wakil 1 -->
+                        <div class="bg-cardBg p-6 rounded-2xl border border-borderBg text-center transition-transform hover:-translate-y-2">
+                            <div class="w-24 h-24 mx-auto mb-4 rounded-full border-2 border-gray-500 overflow-hidden">
+                                <img src="https://c.termai.cc/i141/XGA.jpg" alt="Wakil 1" class="w-full h-full object-cover">
+                            </div>
+                            <h5 class="font-bold text-lg text-white">Rifan</h5>
+                            <p class="text-xs text-gray-400">Wakil 1</p>
+                        </div>
+                        <!-- Wakil 2 -->
+                        <div class="bg-cardBg p-6 rounded-2xl border border-borderBg text-center transition-transform hover:-translate-y-2">
+                            <div class="w-24 h-24 mx-auto mb-4 rounded-full border-2 border-gray-500 overflow-hidden">
+                                <img src="https://c.termai.cc/i156/TSI.jpg" alt="Wakil 2" class="w-full h-full object-cover">
+                            </div>
+                            <h5 class="font-bold text-lg text-white">Wildan</h5>
+                            <p class="text-xs text-gray-400">Wakil 2</p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- SECTION 2: GALERI AKTIVITAS -->
+        <section id="galeri" class="py-24 bg-cardBg/40 border-t border-b border-borderBg">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center space-y-4 mb-16">
+                    <h2 class="text-xs font-extrabold text-brand-neon tracking-widest uppercase">Intip Keseruannya</h2>
+                    <h3 class="text-3xl sm:text-4xl font-black">GALERI KEGIATAN</h3>
+                    <p class="text-gray-400 max-w-xl mx-auto">Potret keseruan saat kami belajar merakit, memprogram, dan mengeksplorasi dunia robotika dan elektronika bersama-sama.</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <!-- Foto Kegiatan 1 (Diperbarui) -->
+                    <div class="group relative rounded-3xl overflow-hidden border border-borderBg h-72">
+                        <img src="https://c.termai.cc/i108/hJMz.jpg" alt="Kegiatan Robotika Hardware" class="w-full h-full object-cover transform group-hover:scale-110 transition-duration-500">
+                        <div class="absolute inset-0 bg-gradient-to-t from-darkBg via-darkBg/50 to-transparent opacity-90"></div>
+                        <div class="absolute bottom-0 left-0 p-6 w-full">
+                            <span class="text-[10px] bg-brand-neon text-darkBg px-2 py-1 rounded-md font-bold mb-2 inline-block uppercase">Hardware</span>
+                            <h4 class="text-lg font-bold text-white mb-1">Perakitan & Rangkaian Elektronika</h4>
+                            <p class="text-xs text-gray-300">Belajar menganalisa komponen, menyusun kabel jumper, dan bereksperimen dengan berbagai sensor secara langsung.</p>
+                        </div>
+                    </div>
+
+                    <!-- Foto Kegiatan 2 -->
+                    <div class="group relative rounded-3xl overflow-hidden border border-borderBg h-72">
+                        <img src="https://c.termai.cc/i159/yGyWBG.jpg" alt="Kegiatan Robotika Software" class="w-full h-full object-cover transform group-hover:scale-110 transition-duration-500">
+                        <div class="absolute inset-0 bg-gradient-to-t from-darkBg via-darkBg/50 to-transparent opacity-90"></div>
+                        <div class="absolute bottom-0 left-0 p-6 w-full">
+                            <span class="text-[10px] bg-purple-500 text-white px-2 py-1 rounded-md font-bold mb-2 inline-block uppercase">Praktikum</span>
+                            <h4 class="text-lg font-bold text-white mb-1">Eksplorasi Perangkat Lunak & Keras</h4>
+                            <p class="text-xs text-gray-300">Menyatukan fungsi software (coding) agar sistem hardware robot dapat merespon sesuai perintah yang dibuat.</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Foto Kegiatan 3 -->
+                    <div class="group relative rounded-3xl overflow-hidden border border-borderBg h-72">
+                        <img src="https://c.termai.cc/i130/J37hqF.jpg" alt="Kegiatan Robotika Diskusi" class="w-full h-full object-cover transform group-hover:scale-110 transition-duration-500">
+                        <div class="absolute inset-0 bg-gradient-to-t from-darkBg via-darkBg/50 to-transparent opacity-90"></div>
+                        <div class="absolute bottom-0 left-0 p-6 w-full">
+                            <span class="text-[10px] bg-yellow-500 text-darkBg px-2 py-1 rounded-md font-bold mb-2 inline-block uppercase">Kolaborasi</span>
+                            <h4 class="text-lg font-bold text-white mb-1">Kerjasama & Diskusi Tim</h4>
+                            <p class="text-xs text-gray-300">Robotika adalah tentang kerja tim! Kami saling bertukar pikiran untuk menemukan solusi pemecahan masalah terbaik.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 3: MINIGAME LOGIKA -->
+        <section id="minigame" class="py-24 bg-darkBg relative overflow-hidden border-b border-borderBg">
+            <!-- Background Decoration -->
+            <div class="absolute top-0 right-0 w-[500px] h-[500px] bg-brand-neon/5 rounded-full blur-[100px] pointer-events-none"></div>
+            
+            <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+                <div class="bg-cardBg border border-borderBg rounded-3xl p-8 sm:p-12 shadow-2xl">
+                    <div class="text-center mb-8">
+                        <div class="w-16 h-16 bg-brand-neon/20 text-brand-neon rounded-full flex items-center justify-center text-3xl mx-auto mb-4">
+                            <i class="fas fa-microchip"></i>
+                        </div>
+                        <h3 class="text-3xl font-black mb-2">Diagnostic Mode: Nyalakan Sistem!</h3>
+                        <p class="text-gray-400">Robot gagal menyala. Coba susun ulang panel dayanya dengan kombinasi yang benar.</p>
+                        <p class="text-sm text-yellow-400 mt-2 font-mono bg-darkBg border border-borderBg inline-block px-4 py-2 rounded-lg mt-4 shadow-lg">
+                            <i class="fas fa-exclamation-triangle"></i> CLUE: "Sistem butuh arus daya. Pastikan kunci keamanan terbuka (OFF). Sensor & Motor harus sinkron (sama-sama ON)."
+                        </p>
+                    </div>
+
+                    <!-- Game Container -->
+                    <div class="bg-darkBg rounded-2xl p-6 md:p-10 border border-borderBg flex flex-col items-center">
+                        <!-- Robot Head Display -->
+                        <div class="w-36 h-36 bg-gray-800 rounded-2xl border-4 border-gray-600 flex items-center justify-center gap-5 relative mb-10 transition-colors duration-500" id="robot-head">
+                            <div class="absolute -top-6 w-6 h-6 bg-gray-600 rounded-t-lg"></div>
+                            <!-- Eyes -->
+                            <div class="w-10 h-10 rounded-full bg-gray-900 border-2 border-gray-700 transition-all duration-300" id="eye-left"></div>
+                            <div class="w-10 h-10 rounded-full bg-gray-900 border-2 border-gray-700 transition-all duration-300" id="eye-right"></div>
+                            <!-- Mouth -->
+                            <div class="absolute bottom-5 w-14 h-2 bg-gray-900 rounded-full transition-all duration-300" id="mouth"></div>
+                        </div>
+
+                        <!-- 4 Switches Control -->
+                        <div class="w-full max-w-2xl bg-cardBg p-6 rounded-xl border border-borderBg grid grid-cols-2 sm:grid-cols-4 gap-6">
+                            <!-- Switch 1: Main Power -->
+                            <div class="flex flex-col items-center gap-3">
+                                <span class="font-bold font-mono text-xs text-center text-gray-300">1. MAIN POWER</span>
+                                <div class="relative inline-block w-14 h-7 align-middle select-none">
+                                    <input type="checkbox" name="swPower" id="swPower" class="toggle-checkbox absolute block w-7 h-7 rounded-full bg-white border-4 border-gray-400 appearance-none cursor-pointer transition-transform duration-300 ease-in-out z-10 top-0 left-0 m-0" onchange="checkAdvancedLogic()"/>
+                                    <label for="swPower" class="toggle-label block overflow-hidden h-7 rounded-full bg-gray-700 cursor-pointer transition-colors duration-300"></label>
+                                </div>
+                            </div>
+                            <!-- Switch 2: Safety Lock -->
+                            <div class="flex flex-col items-center gap-3">
+                                <span class="font-bold font-mono text-xs text-center text-red-400">2. SAFETY LOCK</span>
+                                <div class="relative inline-block w-14 h-7 align-middle select-none">
+                                    <input type="checkbox" name="swLock" id="swLock" class="toggle-checkbox-lock absolute block w-7 h-7 rounded-full bg-white border-4 border-gray-400 appearance-none cursor-pointer transition-transform duration-300 ease-in-out z-10 top-0 left-0 m-0" onchange="checkAdvancedLogic()" checked/>
+                                    <label for="swLock" class="toggle-label block overflow-hidden h-7 rounded-full bg-red-500 cursor-pointer transition-colors duration-300"></label>
+                                </div>
+                            </div>
+                            <!-- Switch 3: Sensor Array -->
+                            <div class="flex flex-col items-center gap-3">
+                                <span class="font-bold font-mono text-xs text-center text-gray-300">3. SENSOR ARRAY</span>
+                                <div class="relative inline-block w-14 h-7 align-middle select-none">
+                                    <input type="checkbox" name="swSensor" id="swSensor" class="toggle-checkbox absolute block w-7 h-7 rounded-full bg-white border-4 border-gray-400 appearance-none cursor-pointer transition-transform duration-300 ease-in-out z-10 top-0 left-0 m-0" onchange="checkAdvancedLogic()"/>
+                                    <label for="swSensor" class="toggle-label block overflow-hidden h-7 rounded-full bg-gray-700 cursor-pointer transition-colors duration-300"></label>
+                                </div>
+                            </div>
+                            <!-- Switch 4: Servo Motor -->
+                            <div class="flex flex-col items-center gap-3">
+                                <span class="font-bold font-mono text-xs text-center text-gray-300">4. SERVO DRIVE</span>
+                                <div class="relative inline-block w-14 h-7 align-middle select-none">
+                                    <input type="checkbox" name="swMotor" id="swMotor" class="toggle-checkbox absolute block w-7 h-7 rounded-full bg-white border-4 border-gray-400 appearance-none cursor-pointer transition-transform duration-300 ease-in-out z-10 top-0 left-0 m-0" onchange="checkAdvancedLogic()"/>
+                                    <label for="swMotor" class="toggle-label block overflow-hidden h-7 rounded-full bg-gray-700 cursor-pointer transition-colors duration-300"></label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Result Text Panel -->
+                        <div class="mt-6 w-full max-w-2xl bg-black/50 border border-borderBg p-4 rounded-lg font-mono text-center min-h-[60px] flex items-center justify-center">
+                            <p id="game-status" class="text-gray-500 text-sm md:text-base">Status: OFFLINE. (Safety Lock sedang menyala).</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- FOOTER & CALL TO ACTION -->
+        <footer class="bg-cardBg pt-16 pb-8" id="daftar">
+            <div class="max-w-4xl mx-auto px-4 text-center">
+                
+                <!-- CTA SECTION -->
+                <div class="bg-darkBg border border-brand-neon/50 p-8 sm:p-12 rounded-3xl inline-block text-center w-full max-w-lg shadow-lg shadow-brand-neon/10 relative overflow-hidden">
+                    <div class="absolute -top-10 -right-10 w-32 h-32 bg-brand-neon/10 rounded-full blur-2xl"></div>
+                    <div class="absolute -bottom-10 -left-10 w-32 h-32 bg-purple-500/10 rounded-full blur-2xl"></div>
+                    
+                    <h4 class="font-bold text-2xl mb-3 text-white relative z-10">Tunggu Apa Lagi?</h4>
+                    <p class="text-gray-300 mb-8 relative z-10">Jika berminat, segera bergabung ke Ekstrakurikuler <strong>ROBOTIKA</strong> sekarang juga!</p>
+                    
+                    <a href="https://near.tl/sm/S5pM9MuGb/" target="_blank" rel="noopener noreferrer" class="relative z-10 inline-flex items-center justify-center w-full sm:w-auto bg-brand-neon hover:bg-brand-400 text-darkBg font-black text-lg px-10 py-4 rounded-xl transition-all transform hover:-translate-y-1 hover:scale-105 shadow-[0_0_20px_rgba(0,229,255,0.4)] animate-bounce hover:animate-none">
+                        CLICK ME <i class="fas fa-rocket ml-3"></i>
+                    </a>
+                </div>
+            </div>
+            
+            <div class="max-w-7xl mx-auto px-4 mt-16 pt-8 border-t border-borderBg flex flex-col md:flex-row justify-between items-center gap-4">
+                <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 rounded-md overflow-hidden bg-white flex items-center justify-center">
+                        <img src="https://c.termai.cc/i178/RjNOZKF.webp" alt="Logo" class="w-full h-full object-cover">
+                    </div>
+                    <span class="font-black tracking-wider text-white">ROBOTIKA <span class="text-brand-neon">SMANSABA</span></span>
+                </div>
+                <p class="text-gray-500 text-sm">© 2026 Ekstrakurikuler Robotika Smansaba.</p>
+                <div class="flex gap-4">
+                    <a href="#" class="text-gray-400 hover:text-brand-neon transition-colors"><i class="fab fa-instagram text-xl"></i></a>
+                    <a href="#" class="text-gray-400 hover:text-brand-neon transition-colors"><i class="fab fa-whatsapp text-xl"></i></a>
+                </div>
+            </div>
+        </footer>
+
+    </main>
+
+    <!-- JavaScript Scripts -->
+    <script>
+        // Mobile Menu Toggle
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobile-menu');
+            menu.classList.toggle('hidden');
+        }
+
+        // Toast Notification System
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById('toast');
+            const toastBody = document.getElementById('toast-body');
+            const msgEl = document.getElementById('toast-message');
+            const iconEl = document.getElementById('toast-icon');
+            
+            msgEl.textContent = message;
+            
+            if (type === 'success') {
+                toastBody.className = "bg-cardBg border-l-4 border-brand-neon text-white p-4 rounded-r-lg shadow-2xl flex items-center gap-3 min-w-[300px]";
+                iconEl.innerHTML = "<i class='fas fa-check-circle'></i>";
+                iconEl.className = "text-brand-neon text-xl";
+            } else if (type === 'error') {
+                toastBody.className = "bg-cardBg border-l-4 border-red-500 text-white p-4 rounded-r-lg shadow-2xl flex items-center gap-3 min-w-[300px]";
+                iconEl.innerHTML = "<i class='fas fa-times-circle'></i>";
+                iconEl.className = "text-red-500 text-xl";
+            } else if (type === 'warning') {
+                toastBody.className = "bg-cardBg border-l-4 border-yellow-500 text-white p-4 rounded-r-lg shadow-2xl flex items-center gap-3 min-w-[300px]";
+                iconEl.innerHTML = "<i class='fas fa-exclamation-triangle'></i>";
+                iconEl.className = "text-yellow-500 text-xl";
+            }
+
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            
+            setTimeout(() => {
+                toast.classList.add('translate-y-20', 'opacity-0');
+            }, 3500);
+        }
+
+        // Advanced Minigame Logic
+        // Jawaban Benar: Power=ON, Lock=OFF, Sensor=ON, Motor=ON
+        function checkAdvancedLogic() {
+            const power = document.getElementById('swPower').checked;
+            const lock = document.getElementById('swLock').checked;
+            const sensor = document.getElementById('swSensor').checked;
+            const motor = document.getElementById('swMotor').checked;
+            
+            const statusText = document.getElementById('game-status');
+            const eyeL = document.getElementById('eye-left');
+            const eyeR = document.getElementById('eye-right');
+            const mouth = document.getElementById('mouth');
+            const head = document.getElementById('robot-head');
+
+            // Logika Kondisional Papan Kontrol
+            if (!power) {
+                // Skenario 1: Power OFF (Mati total)
+                statusText.innerHTML = "<span class='text-gray-500'>Daya utama terputus. Nyalakan Main Power.</span>";
+                
+                eyeL.className = "w-10 h-10 rounded-full bg-gray-900 border-2 border-gray-700 transition-all duration-300";
+                eyeR.className = "w-10 h-10 rounded-full bg-gray-900 border-2 border-gray-700 transition-all duration-300";
+                mouth.className = "absolute bottom-5 w-14 h-2 bg-gray-900 rounded-full transition-all duration-300"; // Mulut datar
+                head.className = "w-36 h-36 bg-gray-800 rounded-2xl border-4 border-gray-600 flex items-center justify-center gap-5 relative mb-10 transition-colors duration-500";
+            } 
+            else if (power && lock) {
+                // Skenario 2: Power ON tapi Safety Lock aktif (Error/Marah)
+                statusText.innerHTML = "<span class='text-red-500 font-bold'>ERROR! Safety Lock masih aktif. Lepaskan kuncian!</span>";
+                
+                eyeL.className = "w-10 h-10 rounded-full bg-red-500 border-2 border-white glow-red transition-all duration-300";
+                eyeR.className = "w-10 h-10 rounded-full bg-red-500 border-2 border-white glow-red transition-all duration-300";
+                mouth.className = "absolute bottom-5 w-14 h-4 bg-white rounded-t-full transition-all duration-300"; // Mulut cemberut (sedih/marah)
+                head.className = "w-36 h-36 bg-gray-800 rounded-2xl border-4 border-red-500 flex items-center justify-center gap-5 relative mb-10 transition-colors duration-500 glow-red";
+                showToast("Sistem mendeteksi tegangan terkunci!", "error");
+            } 
+            else if (power && !lock && (!sensor || !motor)) {
+                // Skenario 3: Power ON, Lock OFF, tapi komponen belum siap (Standby)
+                statusText.innerHTML = "<span class='text-yellow-400'>MODE STANDBY. Menunggu inisiasi Sensor & Servo Motor...</span>";
+                
+                eyeL.className = "w-10 h-10 rounded-full bg-yellow-400 border-2 border-white glow-yellow transition-all duration-300 opacity-50";
+                eyeR.className = "w-10 h-10 rounded-full bg-yellow-400 border-2 border-white glow-yellow transition-all duration-300 opacity-50";
+                mouth.className = "absolute bottom-5 w-8 h-8 bg-gray-900 rounded-full transition-all duration-300"; // Mulut bundar (kaget/menunggu)
+                head.className = "w-36 h-36 bg-gray-800 rounded-2xl border-4 border-yellow-500 flex items-center justify-center gap-5 relative mb-10 transition-colors duration-500 glow-yellow";
+            }
+            else if (power && !lock && sensor && motor) {
+                // Skenario 4: SEMUA BENAR (Sukses)
+                statusText.innerHTML = "<span class='text-brand-neon font-bold tracking-wider'>ALL SYSTEMS ONLINE! DIAGNOSTIC SUCCESS!</span>";
+                
+                eyeL.className = "w-10 h-10 rounded-full bg-brand-neon border-2 border-white glow-neon transition-all duration-300";
+                eyeR.className = "w-10 h-10 rounded-full bg-brand-neon border-2 border-white glow-neon transition-all duration-300";
+                mouth.className = "absolute bottom-5 w-14 h-6 bg-white rounded-b-full transition-all duration-300"; // Mulut senyum lebar
+                head.className = "w-36 h-36 bg-gray-700 rounded-2xl border-4 border-brand-neon flex items-center justify-center gap-5 relative mb-10 transition-colors duration-500 glow-neon";
+                
+                showToast("Luar Biasa! Logika pemecahan masalahmu bagus!", "success");
+            }
+        }
+    </script>
+</body>
+</html>
